@@ -1,0 +1,37 @@
+name: dka-services-product-pos-product
+
+services:
+  app:
+    image: image
+    container_name: dka-services-product-pos-product-app
+    hostname: dka-services-product-pos-product-app
+    pull_policy: always
+    restart: always
+    environment:
+      DKA_PG_HOST: dka-dev-postgresql
+      DKA_MONGO_HOST : dka-dev-mongo
+      DKA_MONGO_PASSWORD : nkbbp6k1EXnEeUDoVZPXRr9a4
+      DKA_PG_PASSWORD: nkbbp6k1EXnEeUDoVZPXRr9a4
+      # Servicing Scope Url #
+      DKA_SERVICE_ACCOUNT_HOST: dka-services-core-account-app
+      DKA_SERVICE_ENTERPRISE_HOST: dka-services-core-enterprise-app
+    deploy:
+      resources:
+        reservations:
+          memory: 100M
+        limits:
+          memory: 300M
+    ports:
+      # expose by wan external public
+      - target: 50051
+        published: 000
+        protocol: tcp
+        host_ip: 0.0.0.0
+    networks:
+      - dka-development-network
+
+
+networks:
+  dka-development-network:
+    name: dka-development-network
+    external: true
