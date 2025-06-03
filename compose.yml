@@ -1,23 +1,22 @@
-name: dka-services-core-enterprise
+name: project-name
 
 services:
   app:
     image: yovanggaanandhika/node:latest
-    container_name: dka-services-core-enterprise-app
-    hostname: dka-services-core-enterprise-app
+    container_name: project-name-app
+    hostname: project-name-app
     pull_policy: always
     restart: always
     environment:
-      DKA_MONGO_HOST: dka-services-core-enterprise-mongo
+      DKA_PG_HOST: dka-dev-postgresql
+      DKA_MONGO_HOST: dka-dev-mongo
+      # Servicing Scope Url #
+      DKA_SERVICE_ACCOUNT_HOST: dka-services-core-account-app
+      DKA_SERVICE_ENTERPRISE_HOST: dka-services-core-enterprise-app
     ports:
       # expose by wann external public
       - target: 50051
         published: 50052
-        protocol: tcp
-        host_ip: 0.0.0.0
-      #expose by internal kubernetes
-      - target: 80
-        published: 8082
         protocol: tcp
         host_ip: 0.0.0.0
     volumes:
@@ -34,46 +33,9 @@ services:
           memory: 2048M
     command: yarn run start:dev
     networks:
-      - dka-services-core-enterprise
       - dka-development-network
 
-  mongo:
-    image: yovanggaanandhika/mongo:12-slim-mongo-8.0.5
-    container_name: dka-services-core-enterprise-mongo
-    hostname: dka-services-core-enterprise-mongo
-    pull_policy: always
-    restart: always
-    environment:
-      DKA_REPL_ENABLED: true
-    ports:
-      - target: 27017
-        published: 27018
-        protocol: tcp
-        host_ip: 0.0.0.0
-    deploy:
-      resources:
-        reservations:
-          memory: 128M
-          cpus: '0.5'
-        limits:
-          memory: 512M
-          cpus: '0.8'
-    volumes:
-      - type: volume
-        source: dka-services-core-enterprise-mongo-data
-        target: /data/db
-    networks:
-      - dka-services-core-enterprise
-
-volumes:
-
-  dka-services-core-enterprise-mongo-data:
-    name : dka-services-core-enterprise-mongo-data
-    driver: local
-
 networks:
-  dka-services-core-enterprise:
-    driver: bridge
   dka-development-network:
     name: dka-development-network
     external: true

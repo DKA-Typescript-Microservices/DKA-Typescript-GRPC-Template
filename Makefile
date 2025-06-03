@@ -21,3 +21,13 @@ pull:
 
 publish:
 	docker buildx build --progress=plain --platform linux/amd64,linux/386 -t ${REPOSITORY_NAME}:${TAG_NAME} --push .
+
+push-secrets:
+	@echo "🚀 Pushing secrets to repo: $(REPO)"
+	@cat $(SECRETS_FILE) | while IFS='=' read -r key value; do \
+		if [ -n "$$key" ]; then \
+			echo "🔐 Setting secret $$key..."; \
+			gh secret set "$$key" -b"$$value" --repo "$(REPO)"; \
+		fi \
+	done
+	@echo "✅ All secrets pushed!"
